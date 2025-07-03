@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Send Messages | n8n Webhook Integration{% endblock %}
+
+{% block description %}Send messages to n8n workflow automation{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1><i class="fas fa-paper-plane"></i> Send Message to n8n</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert {{ category }}">
+            {% if category == 'success' %}
+              <i class="fas fa-check-circle"></i>
+            {% else %}
+              <i class="fas fa-exclamation-triangle"></i>
+            {% endif %}
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="post" id="webhookForm" enctype="application/x-www-form-urlencoded">
+        <div class="form-group">
+            <label for="name">
+                <i class="fas fa-user form-icon"></i>Your Name
+            </label>
+            <input type="text" id="name" name="name" placeholder="Enter your name" required>
+        </div>
+
+        <div class="form-group">
+            <label for="message">
+                <i class="fas fa-comment form-icon"></i>Your Message
+            </label>
+            <textarea id="message" name="message" placeholder="Type your message here..." required></textarea>
+        </div>
+
+        <button type="submit" class="btn" id="submitBtn">
+            <span><i class="fas fa-rocket"></i> Send to n8n Workflow</span>
+        </button>
+    </form>
+</div>
+{% endblock %}
