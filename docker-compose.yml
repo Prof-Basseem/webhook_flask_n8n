@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  flask:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: flask-container
+    ports:
+      - "5000:5000"
+    networks:
+      - npm-network
+    restart: always
+
+networks:
+  npm-network:
+    external: true
