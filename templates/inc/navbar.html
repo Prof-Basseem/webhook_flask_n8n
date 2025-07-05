@@ -1,0 +1,36 @@
+<!-- Navigation Bar -->
+<nav class="navbar">
+    <div class="nav-container">
+        <div class="nav-brand">
+            <i class="fas fa-webhook"></i>
+            <span>n8n Integration</span>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="{{ url_for('index') }}" class="nav-link {% if request.endpoint == 'index' %}active{% endif %}">
+                    <i class="fas fa-home"></i> Send Data
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('view_data') }}" class="nav-link {% if request.endpoint == 'view_data' %}active{% endif %}">
+                    <i class="fas fa-database"></i> View Data
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('api_data') }}" class="nav-link" target="_blank">
+                    <i class="fas fa-download"></i> API
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-question-circle"></i> Help
+                </a>
+            </li>
+        </ul>
+        <div class="nav-toggle" id="mobile-menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </div>
+    </div>
+</nav>

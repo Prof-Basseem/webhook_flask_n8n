@@ -16,17 +16,44 @@ class NavbarHandler {
         this.setupMobileMenu();
         this.setupNavLinks();
         this.setupScrollEffects();
+        this.setupKeyboardNavigation();
         this.highlightActiveLink();
+        
+        // Debug log for mobile devices
+        console.log('NavbarHandler initialized');
+        console.log('Mobile menu element:', this.mobileMenu);
+        console.log('Nav menu element:', this.navMenu);
     }
 
     /**
      * Setup mobile menu toggle functionality
      */
     setupMobileMenu() {
-        if (this.mobileMenu) {
-            this.mobileMenu.addEventListener('click', () => {
+        if (this.mobileMenu && this.navMenu) {
+            // Add touch event for better mobile responsiveness
+            this.mobileMenu.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 this.toggleMobileMenu();
             });
+            
+            // Add touch event for mobile devices
+            this.mobileMenu.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.toggleMobileMenu();
+            }, { passive: false });
+            
+            // Close menu when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!this.navMenu.contains(e.target) && !this.mobileMenu.contains(e.target)) {
+                    this.closeMobileMenu();
+                }
+            });
+            
+            console.log('Mobile menu events attached');
+        } else {
+            console.error('Mobile menu or nav menu element not found');
         }
     }
 
@@ -34,14 +61,20 @@ class NavbarHandler {
      * Toggle mobile menu state
      */
     toggleMobileMenu() {
+        const isActive = this.navMenu.classList.contains('active');
+        
+        console.log('Toggling mobile menu. Currently active:', isActive);
+        
         this.mobileMenu.classList.toggle('is-active');
         this.navMenu.classList.toggle('active');
         
         // Add/remove body scroll lock when menu is open
         if (this.navMenu.classList.contains('active')) {
             document.body.style.overflow = 'hidden';
+            console.log('Mobile menu opened');
         } else {
             document.body.style.overflow = '';
+            console.log('Mobile menu closed');
         }
     }
 

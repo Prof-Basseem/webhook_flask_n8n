@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}Received Data | n8n Webhook Integration{% endblock %}
+
+{% block description %}View all data received from n8n webhooks{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/view_data.css') }}">
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/view_data.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="header-section">
+        <h1><i class="fas fa-database"></i> Received Data from n8n</h1>
+        <p class="subtitle">View and manage all data received from n8n webhook endpoints</p>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert {{ category }}">
+            {% if category == 'success' %}
+              <i class="fas fa-check-circle"></i>
+            {% else %}
+              <i class="fas fa-exclamation-triangle"></i>
+            {% endif %}
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="stats-section">
+        <div class="stat-card">
+            <i class="fas fa-chart-bar"></i>
+            <div class="stat-info">
+                <h3>{{ total_count }}</h3>
+                <p>Total Entries</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-clock"></i>
+            <div class="stat-info">
+                <h3>{{ received_data[0].received_at if received_data else 'N/A' }}</h3>
+                <p>Last Received</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-server"></i>
+            <div class="stat-info">
+                <h3>/receive-from-n8n</h3>
+                <p>Webhook Endpoint</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="actions-section">
+        <a href="{{ url_for('api_data') }}" class="btn btn-secondary" target="_blank">
+            <i class="fas fa-download"></i> Export as JSON
+        </a>
+        {% if received_data %}
+        <form method="post" action="{{ url_for('clear_data') }}" style="display: inline;" 
+              onsubmit="return confirm('Are you sure you want to clear all data?')">
+            <button type="submit" class="btn btn-danger">
+                <i class="fas fa-trash"></i> Clear All Data
+            </button>
+        </form>
+        {% endif %}
+    </div>
+
+    {% if received_data %}
+    <div class="data-section">
+        <h2><i class="fas fa-list"></i> Received Entries</h2>
+        
+        {% for entry in received_data %}
+        <div class="data-entry">
+            <div class="entry-header">
+                <div class="entry-meta">
+                    <span class="timestamp">
+                        <i class="fas fa-clock"></i> {{ entry.received_at }}
+                    </span>
+                    <span class="source-ip">
+                        <i class="fas fa-globe"></i> {{ entry.source_ip }}
+                    </span>
+                </div>
+                <div class="entry-actions" >
+                    <button class="btn btn-small btn-outline" onclick="toggleData('entry-{{ loop.index }}')">
+                        <i class="fas fa-eye" style="color: black;"></i> 
+                        <span style="color: black;" >
+                            View Details
+                        </span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="entry-preview">
+                {% if entry.data %}
+                    {% for key, value in entry.data.items() %}
+                        {% if loop.index <= 3 %}
+                        <span class="preview-item">
+                            <strong>{{ key }}:</strong> 
+                            {% if value|string|length > 50 %}
+                                {{ value|string|truncate(50) }}
+                            {% else %}
+                                {{ value }}
+                            {% endif %}
+                        </span>
+                        {% endif %}
+                    {% endfor %}
+                    {% if entry.data|length > 3 %}
+                        <span class="preview-item">
+                            <em>... and {{ entry.data|length - 3 }} more fields</em>
+                        </span>
+                    {% endif %}
+                {% endif %}
+            </div>
+
+            <div class="entry-details" id="entry-{{ loop.index }}" style="display: none;">
+                <h4><i class="fas fa-info-circle"></i> Full Data:</h4>
+                <pre class="json-data">{{ entry.data | tojson(indent=2) }}</pre>
+                
+                <h4><i class="fas fa-info-circle"></i> Metadata:</h4>
+                <div class="metadata">
+                    <p><strong>Received At:</strong> {{ entry.received_at }}</p>
+                    <p><strong>Source IP:</strong> {{ entry.source_ip }}</p>
+                    <p><strong>User Agent:</strong> {{ entry.user_agent }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i class="fas fa-inbox"></i>
+        <h3>No Data Received Yet</h3>
+        <p>Waiting for data from n8n webhook...</p>
+        <div class="webhook-info">
+            <p><strong>Webhook URL:</strong></p>
+            <code>POST {{ request.url_root }}receive-from-n8n</code>
+            <p class="info-text">Configure your n8n workflow to send data to this endpoint</p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

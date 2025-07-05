@@ -103,7 +103,11 @@
     display: none;
     flex-direction: column;
     cursor: pointer;
-    padding: 5px;
+    padding: 10px;
+    border: none;
+    background: none;
+    z-index: 1001;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .bar {
@@ -119,6 +123,7 @@
 @media (max-width: 768px) {
     .nav-toggle {
         display: flex;
+        order: 2;
     }
 
     .nav-menu {
@@ -133,8 +138,10 @@
         justify-content: flex-start;
         align-items: center;
         padding-top: 50px;
-        transition: 0.3s;
+        transition: left 0.3s ease;
         box-shadow: 0 10px 27px rgba(0, 0, 0, 0.05);
+        z-index: 1000;
+        overflow-y: auto;
     }
 
     .nav-menu.active {
@@ -143,11 +150,15 @@
 
     .nav-item {
         margin: 15px 0;
+        width: 90%;
+        text-align: center;
     }
 
     .nav-link {
         font-size: 1.2rem;
         padding: 15px 25px;
+        width: 100%;
+        justify-content: center;
     }
 
     .nav-toggle.is-active .bar:nth-child(2) {
@@ -160,6 +171,53 @@
 
     .nav-toggle.is-active .bar:nth-child(3) {
         transform: translateY(-8px) rotate(-45deg);
+    }
+    
+    /* Ensure brand stays in place */
+    .nav-brand {
+        flex: 1;
+        order: 1;
+    }
+}
+
+/* Additional mobile breakpoints */
+@media (max-width: 480px) {
+    .nav-container {
+        padding: 0 15px;
+    }
+    
+    .nav-brand {
+        font-size: 1.3rem;
+    }
+    
+    .nav-link {
+        font-size: 1.1rem;
+        padding: 12px 20px;
+    }
+}
+
+@media (max-width: 992px) and (min-width: 769px) {
+    .nav-item {
+        margin-left: 20px;
+    }
+    
+    .nav-link {
+        font-size: 0.95rem;
+        padding: 8px 12px;
+    }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+    .nav-toggle {
+        padding: 15px;
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    .bar {
+        width: 28px;
+        height: 4px;
     }
 }
 

@@ -378,6 +378,11 @@ textarea:focus {
     }
 }
 
+/* Entry Actions Styles */
+.entry-actions {
+    color: black !important;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .main-content {
